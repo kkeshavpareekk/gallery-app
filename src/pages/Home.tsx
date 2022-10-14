@@ -54,7 +54,7 @@ const Home: React.FC = () => {
     console.log("Begin async operation");
 
     setTimeout(() => {
-      console.log("Async operation has ended");
+      setPage(1);
       event.detail.complete();
     }, 2000);
   };
@@ -120,7 +120,10 @@ const Home: React.FC = () => {
           </IonRow>
         </IonHeader>
         <IonContent className="ion-no-padding">
-          <IonRow className="ion-justify-content-center">
+          <IonRow
+            style={{ display: "flex" }}
+            className="ion-justify-content-center"
+          >
             {showData.length !== 0 ? (
               showData.map((img: any, index: number) => (
                 <ImageCard pic={img} key={index} />

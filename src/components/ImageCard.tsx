@@ -24,13 +24,16 @@ interface Props {
 const ImageCard: React.FC<Props> = ({ pic }) => {
   return (
     <IonCol
-      size="10"
+      size="md-4"
       className="animate__animated animate__fadeIn ion-no-padding"
     >
       <IonCard>
         <IonCardContent className="ion-no-padding">
           <Link to={`details/${pic.id}`}>
-            <IonImg src={pic.urls.full} />
+            <img
+              src={pic.urls.small}
+              style={{ objectFit: "cover", height: "400px", width: "400px" }}
+            />
           </Link>
           <IonAccordionGroup>
             <IonAccordion>
