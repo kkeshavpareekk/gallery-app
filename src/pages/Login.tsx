@@ -31,7 +31,7 @@ const Login: React.FC = () => {
   const [iserror, setIsError] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
 
-  const { setIsLoggedIn } = useContext(authContext);
+  const { isLoggedIn, setIsLoggedIn } = useContext(authContext);
 
   const handleLogin = () => {
     signInWithEmailAndPassword(auth, email, password)

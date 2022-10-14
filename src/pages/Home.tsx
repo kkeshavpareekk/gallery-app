@@ -1,7 +1,11 @@
 import {
+  IonButton,
+  IonCol,
   IonContent,
   IonHeader,
   IonPage,
+  IonRefresher,
+  IonRefresherContent,
   IonRow,
   IonSearchbar,
   IonTitle,
@@ -11,7 +15,7 @@ import { useContext, useEffect, useState } from "react";
 import { trashBin } from "ionicons/icons";
 import "./Home.module.css";
 import ImageCard from "../components/ImageCard";
-import Pagination from "@mui/material/Pagination";
+
 import { Link } from "react-router-dom";
 import { authContext } from "../context/authContext";
 
@@ -34,6 +38,30 @@ const Home: React.FC = () => {
     loadData();
   }, [page]);
 
+  const handleChangePageNext = () => {
+    setPage(page + 1);
+  };
+  const handleChangePagePrevious = () => {
+    if (page - 1 <= 0) {
+      setPage(1);
+      return;
+    }
+    setPage(page - 1);
+  };
+
+  function doRefresh(event: any) {
+    console.log("Begin async operation");
+    setTimeout(() => {
+      setPage(1);
+      event.detail.complete();
+    }, 2000);
+  }
+
+  const logoutUser = () => {
+    localStorage.removeItem("user");
+    setIsLoggedIn(false);
+  };
+
   useEffect(() => {
     setShowData(imagesData.filter((img: any) => img.id.includes(search)));
   }, [search, imagesData]);
@@ -41,41 +69,54 @@ const Home: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar className="ion-justify-content-between ion-align-items-center">
-          <span style={{ fontSize: "1.4rem", padding: ".4em" }}>
-            Image Gallery
-          </span>
-          {isLoggedIn ? (
-            <span
-              className="ion-padding"
-              style={{ marginLeft: "5rem", color: "blue" }}
-              onClick={() => {
-                localStorage.removeItem("user");
-                setIsLoggedIn(false);
-              }}
-            >
-              Logout
-            </span>
-          ) : (
-            <span className="ion-padding" style={{ marginLeft: "5rem" }}>
-              <Link
-                style={{ textDecoration: "none", color: "#03203C" }}
-                to="/login"
-              >
-                Login
+        <IonRow
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            background: "linear-gradient(to right, #ff6e7f, #bfe9ff)",
+          }}
+        >
+          <IonCol
+            style={{
+              fontSize: "1.5rem",
+              color: "#fff",
+              display: "flex",
+              marginTop: ".8rem",
+              width: "100%",
+            }}
+            className="ion-justify-content-evenly ion-align-items-center ion-padding"
+          >
+            <span>Image Gallery</span>
+            {!isLoggedIn ? (
+              <Link to="/login">
+                <IonButton>Login</IonButton>
               </Link>
-            </span>
-          )}
-        </IonToolbar>
+            ) : (
+              <IonButton onClick={logoutUser}>Lougout</IonButton>
+            )}
+          </IonCol>
+          <IonCol size="12">
+            <IonSearchbar
+              showClearButton="always"
+              color="warning"
+              value={search}
+              onIonChange={(e: any) => setSearch(e.target.value)}
+              clearIcon={trashBin}
+            ></IonSearchbar>
+          </IonCol>
+        </IonRow>
       </IonHeader>
       <IonContent className="ion-no-padding">
-        <IonSearchbar
-          showClearButton="always"
-          color="secondary"
-          value={search}
-          onIonChange={(e: any) => setSearch(e.target.value)}
-          clearIcon={trashBin}
-        ></IonSearchbar>
+        {/* <IonRefresher
+          slot="fixed"
+          onIonRefresh={doRefresh}
+          pullFactor={0.5}
+          pullMin={100}
+          pullMax={200}
+        >
+          <IonRefresherContent></IonRefresherContent>
+        </IonRefresher> */}
         <IonRow className="ion-justify-content-center">
           {showData.length !== 0 ? (
             showData.map((img: any, index: number) => (
@@ -85,12 +126,11 @@ const Home: React.FC = () => {
             <div className="ion-padding">no results found...</div>
           )}
         </IonRow>
-        <IonRow className="ion-display-flex ion-justify-content-center ion-padding-vertical">
-          <Pagination
-            count={10}
-            page={page}
-            onChange={(e, value: number) => setPage(value)}
-          />
+        <IonRow className="ion-justify-content-evenly ion-padding-vertical">
+          <IonButton onClick={handleChangePagePrevious}>
+            &larr; Previous
+          </IonButton>
+          <IonButton onClick={handleChangePageNext}>Next &rarr;</IonButton>
         </IonRow>
       </IonContent>
     </IonPage>
